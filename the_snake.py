@@ -7,7 +7,7 @@ import pygame
 class GameObject:
     """Базовый класс для игровых объектов."""
 
-    def __init__(self, position, body_color):
+    def __init__(self, position=(0, 0), body_color=(255, 255, 255)):
         """
         Инициализация нового объекта.
         Принимающий расположения объекта и цвет.
@@ -37,12 +37,14 @@ UP = (0, -1)
 DOWN = (0, 1)
 LEFT = (-1, 0)
 RIGHT = (1, 0)
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+clock = pygame.time.Clock()
 
 
 class Apple(GameObject):
     """Класс для яблока на игровом поле."""
 
-    def __init__(self, position, body_color):
+    def __init__(self, position=(100, 100), body_color=(255, 0, 0)):
         """
         Инициализация нового яблока.
         С параметрами родительского класса GameObject.
@@ -58,7 +60,7 @@ class Apple(GameObject):
 class Snake(GameObject):
     """Класс для змеи на игровом поле. Наследует от класса GameObject."""
 
-    def __init__(self, position, body_color):
+    def __init__(self, position=(200, 200), body_color=(0, 255, 0)):
         """Инициализация новой змеи с параметрами координаты и цвета."""
         super().__init__(position, body_color)
         self.positions = [position]
@@ -128,8 +130,6 @@ def handle_keys(snake):
 def main():
     """Основная функция игры."""
     pygame.init()
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    clock = pygame.time.Clock()  # Добавлено определение переменной clock
 
     snake = Snake((GRID_WIDTH // 2, GRID_HEIGHT // 2), (0, 255, 0))
     apple = Apple((randint(0, GRID_WIDTH - 2),
