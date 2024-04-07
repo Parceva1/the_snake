@@ -8,6 +8,7 @@ class GameObject:
     """
     Базовый класс для игровых объектов.
     """
+
     def __init__(self, position, body_color):
         """
         Инициализация нового объекта.
@@ -28,9 +29,8 @@ class GameObject:
 
 
 class Apple(GameObject):
-    """
-    Класс для яблока на игровом поле.
-    """
+    """Класс для яблока на игровом поле."""
+
     def __init__(self, position, body_color):
         """
         Инициализация нового яблока.
@@ -52,6 +52,7 @@ class Snake(GameObject):
 
     Наследует от класса GameObject.
     """
+
     def __init__(self, position, body_color):
         """
         Инициализация новой змеи
@@ -72,15 +73,11 @@ class Snake(GameObject):
                 block_size, block_size))
 
     def get_head_position(self):
-        """
-        Получение позиции головы змеи.
-        """
+        """Получение позиции головы змеи."""
         return self.positions[0]
 
     def move(self, direction, grow=False):
-        """
-        Движение змеи на игровом поле и направление движения.
-        """
+        """Движение змеи на игровом поле и направление движения."""
         x, y = self.get_head_position()
         if direction == UP:
             self.positions.insert(0, (x, y - 1))
@@ -95,16 +92,12 @@ class Snake(GameObject):
             self.positions.pop()
 
     def reset(self, position):
-        """
-        Сброс позиции змеи и направления движения.
-        """
+        """Сброс позиции змеи и направления движения."""
         self.positions = [position]
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
 
     def update_direction(self, new_direction):
-        """
-        Обновление направления движения змеи.
-        """
+        """Обновление направления движения змеи."""
         new_1 = new_direction[1]
         slf = self.direction
         if new_direction[0] * -1 != slf[0] or new_1 * -1 != slf[1]:
@@ -144,9 +137,7 @@ def handle_keys(snake):
 
 
 def main():
-    """
-    Основная функция игры.
-    """
+    """Основная функция игры."""
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
