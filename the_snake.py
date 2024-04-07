@@ -47,18 +47,25 @@ clock = pygame.time.Clock()
 
 
 class Apple:
+    """Класс для представления яблока в игре."""
+
     def __init__(self):
+        """Инициализация позиции и цвета яблока."""
         self.position = (200, 200)
         self.body_color = APPLE_COLOR
 
     def draw(self):
+        """Отрисовка яблока на игровом поле."""
         rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
         pygame.draw.rect(screen, self.body_color, rect)
         pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
 class Snake:
+    """Класс для представления змейки в игре."""
+
     def __init__(self):
+        """Инициализация начальных параметров змейки."""
         self.positions = [(100, 100), (80, 100), (60, 100)]
         self.direction = RIGHT
         self.next_direction = None
@@ -66,17 +73,25 @@ class Snake:
         self.move_counter = 0
 
     def draw(self):
+        """Отрисовка змейки на игровом поле."""
         for position in self.positions:
             rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
             pygame.draw.rect(screen, self.body_color, rect)
             pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
 
     def update_direction(self):
+        """Обновление направления движения змейки."""
         if self.next_direction:
             self.direction = self.next_direction
             self.next_direction = None
 
     def move(self, apple):
+        """Перемещение змейки по игровому полю.
+
+        Если змейка достигает края экрана,
+        она появляется с противоположной стороны.
+        При столкновении с яблоком, змейка растет.
+        """
         self.move_counter += 1
         if self.move_counter >= MOVE_INTERVAL:
             # Сохраняем предыдущее положение головы
@@ -84,7 +99,9 @@ class Snake:
 
             # Перемещаем голову змейки в новое место
             x, y = self.direction
-            new_head_pos = (self.positions[0][0] + x * GRID_SIZE, self.positions[0][1] + y * GRID_SIZE)
+            pos_0_0 = self.positions[0][0] + x * GRID_SIZE
+            pos_0_1 = self.positions[0][1] + y * GRID_SIZE
+            new_head_pos = (pos_0_0, pos_0_1)
             if new_head_pos[0] >= SCREEN_WIDTH:
                 new_head_pos = (0, new_head_pos[1])
             elif new_head_pos[0] < 0:
@@ -99,9 +116,13 @@ class Snake:
             # Проверяем, съедено ли яблоко
             if new_head_pos == apple.position:
                 # Создаем новую позицию для нового последнего сегмента
-                new_tail_pos = (prev_segment[0] - x * GRID_SIZE, prev_segment[1] - y * GRID_SIZE)
+                prev_x = prev_segment[0] - x * GRID_SIZE
+                prev_y = prev_segment[1] - y * GRID_SIZE
+                new_tail_pos = (prev_x, prev_y)
                 self.positions.append(new_tail_pos)
-                apple.position = (randint(0, GRID_WIDTH - 1) * GRID_SIZE, randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
+                rnd_width = randint(0, GRID_WIDTH - 1) * GRID_SIZE
+                rnd_height = randint(0, GRID_HEIGHT - 1) * GRID_SIZE
+                apple.position = (rnd_width, rnd_height)
 
             # Перемещаем остальные сегменты
             self.positions[0] = new_head_pos
