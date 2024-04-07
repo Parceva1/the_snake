@@ -26,6 +26,19 @@ class GameObject:
             block_size, block_size))
 
 
+# Определение констант
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+GRID_SIZE = 20
+GRID_WIDTH = SCREEN_WIDTH // GRID_SIZE
+GRID_HEIGHT = SCREEN_HEIGHT // GRID_SIZE
+BOARD_BACKGROUND_COLOR = (0, 0, 0)
+UP = (0, -1)
+DOWN = (0, 1)
+LEFT = (-1, 0)
+RIGHT = (1, 0)
+
+
 class Apple(GameObject):
     """Класс для яблока на игровом поле."""
 
@@ -93,19 +106,6 @@ class Snake(GameObject):
             self.direction = new_direction
 
 
-# Определение констант
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-GRID_SIZE = 20
-GRID_WIDTH = SCREEN_WIDTH // GRID_SIZE
-GRID_HEIGHT = SCREEN_HEIGHT // GRID_SIZE
-BOARD_BACKGROUND_COLOR = (0, 0, 0)
-UP = (0, -1)
-DOWN = (0, 1)
-LEFT = (-1, 0)
-RIGHT = (1, 0)
-
-
 def handle_keys(snake):
     """
     Обработка нажатий клавиш для управления змеей.
@@ -129,7 +129,7 @@ def main():
     """Основная функция игры."""
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    clock = pygame.time.Clock()
+    clock = pygame.time.Clock()  # Добавлено определение переменной clock
 
     snake = Snake((GRID_WIDTH // 2, GRID_HEIGHT // 2), (0, 255, 0))
     apple = Apple((randint(0, GRID_WIDTH - 2),
