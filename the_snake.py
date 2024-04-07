@@ -5,9 +5,7 @@ import pygame
 
 # Определение класса GameObject
 class GameObject:
-    """
-    Базовый класс для игровых объектов.
-    """
+    """Базовый класс для игровых объектов."""
 
     def __init__(self, position, body_color):
         """
@@ -39,25 +37,16 @@ class Apple(GameObject):
         super().__init__(position, body_color)
 
     def randomize_position(self, grid_width, grid_height):
-        """
-        Случайное изменение позиции яблока на игровом поле.
-        """
+        """Случайное изменение позиции яблока на игровом поле."""
         self.position = (randint(0, grid_width - 1),
                          randint(0, grid_height - 1))
 
 
 class Snake(GameObject):
-    """
-    Класс для змеи на игровом поле.
-
-    Наследует от класса GameObject.
-    """
+    """Класс для змеи на игровом поле. Наследует от класса GameObject."""
 
     def __init__(self, position, body_color):
-        """
-        Инициализация новой змеи
-        С параметрами координаты и цвета.
-        """
+        """Инициализация новой змеи с параметрами координаты и цвета."""
         super().__init__(position, body_color)
         self.positions = [position]
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
@@ -120,7 +109,7 @@ RIGHT = (1, 0)
 def handle_keys(snake):
     """
     Обработка нажатий клавиш для управления змеей.
-    snake: объект для обновления направления.
+    Snake: объект для обновления направления.
     """
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
