@@ -59,10 +59,12 @@ class Apple(GameObject):
 
     def randomize_position(self):
         """Случайное изменение позиции яблока на игровом поле."""
+        global positions
         self.position = (randint(0, GRID_WIDTH - 1),
                          randint(0, GRID_HEIGHT - 1))
         while self.position in positions:
-            self.randomize_position()
+            self.position = (randint(0, GRID_WIDTH - 1),
+                             randint(0, GRID_HEIGHT - 1))
 
 
 class Snake(GameObject):
@@ -95,6 +97,7 @@ class Snake(GameObject):
         new_head = ((head_x + self.direction[0]) % GRID_WIDTH,
                     (head_y + self.direction[1]) % GRID_HEIGHT)
 
+        # Рассчитываем новую позицию головы змеи здесь
         head_x, head_y = new_head
 
         if head_x < 0:
@@ -123,7 +126,7 @@ class Snake(GameObject):
         """Обновление направления движения змеи."""
         self.direction = new_direction
         # я заменил, но теперь змейка может ходить в обратную сторону
-        # прошлый вариант не позволел ей так делать
+        # прошлый вариант не позволил ей так делать
 
 
 def handle_keys(snake):
@@ -159,6 +162,7 @@ def main():
 
         if snake.get_head_position() == apple.position:
             apple.randomize_position()
+            # теперь яблоки не могут появиться в змее, костыльно но работает
             snake.move(grow=True)
         else:
             snake.move()
