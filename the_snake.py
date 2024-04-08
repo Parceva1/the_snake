@@ -34,7 +34,7 @@ class GameObject:
         self.position = position
         self.body_color = body_color
 
-    def draw(self, surface, grid_size):
+    def draw(self, surface):
         """
         Отрисовка объекта на игровом поле
         С указанием поверхности для отрисовки и размера блока.
@@ -48,11 +48,12 @@ class GameObject:
 class Apple(GameObject):
     """Класс для яблока на игровом поле."""
 
-    def __init__(self, position=ZERO_POS, body_color=RED):
+    def __init__(self, body_color=RED):
         """
         Инициализация нового яблока.
         С параметрами родительского класса GameObject.
         """
+        self.position = ZERO_POS
         super().__init__(body_color)
         self.randomize_position()
 
@@ -60,22 +61,24 @@ class Apple(GameObject):
         """Случайное изменение позиции яблока на игровом поле."""
         self.position = (randint(0, GRID_WIDTH - 1),
                          randint(0, GRID_HEIGHT - 1))
+        while self.position in positions:
+            self.randomize_position()
 
 
 class Snake(GameObject):
     """Класс для змеи на игровом поле. Наследует от класса GameObject."""
 
-    def __init__(self, position=ZERO_POS, body_color=GREEN):
+    def __init__(self):
         """Инициализация новой змеи с параметрами координаты и цвета."""
-        super().__init__(position, body_color)
-        self.positions = [position]
+        self.body_color = GREEN
         self.reset()
 
-    def draw(self, surface, block_size):
+    def draw(self, surface):
         """
         Отрисовка змеи на игровом поле
         С указанием поверхности для отрисовки и размера блока.
         """
+        block_size = GRID_SIZE
         for pos in self.positions:
             pygame.draw.rect(surface, self.body_color, pygame.Rect(
                 pos[0] * block_size, pos[1] * block_size,
@@ -87,24 +90,13 @@ class Snake(GameObject):
 
     def move(self, grow=False):
         """Движение змеи на игровом поле и направление движения."""
+        global positions
         head_x, head_y = self.get_head_position()
-        if self.direction == UP:
-            new_head = (head_x + UP[0], head_y + UP[1])
-        elif self.direction == DOWN:
-            new_head = (head_x + DOWN[0], head_y + DOWN[1])
-        elif self.direction == LEFT:
-            new_head = (head_x + LEFT[0], head_y + LEFT[1])
-        elif self.direction == RIGHT:
-            new_head = (head_x + RIGHT[0], head_y + RIGHT[1])
+        new_head = ((head_x + self.direction[0]) % GRID_WIDTH,
+                    (head_y + self.direction[1]) % GRID_HEIGHT)
 
-        self.positions.insert(0, new_head)
+        head_x, head_y = new_head
 
-        if not grow:
-            self.positions.pop()
-        # у меня не получилось сделать работающий вариант с %
-        # при замене на метод с % змейка съезжает и не может совпасть с яблоком
-        # ещё ломается скорость змейки и её растягивает и появляются дыры
-        head_x, head_y = self.get_head_position()
         if head_x < 0:
             head_x = GRID_WIDTH - 1
         elif head_x >= GRID_WIDTH:
@@ -113,7 +105,13 @@ class Snake(GameObject):
             head_y = GRID_HEIGHT - 1
         elif head_y >= GRID_HEIGHT:
             head_y = 0
-        self.positions[0] = (head_x, head_y)
+
+        new_head = (head_x, head_y)
+
+        self.positions.insert(0, new_head)
+
+        if not grow:
+            self.positions.pop()
 
     def reset(self):
         """Сброс позиции змеи и направления движения."""
@@ -123,8 +121,9 @@ class Snake(GameObject):
 
     def update_direction(self, new_direction):
         """Обновление направления движения змеи."""
-        if new_direction != (-self.direction[0], -self.direction[1]):
-            self.direction = new_direction
+        self.direction = new_direction
+        # я заменил, но теперь змейка может ходить в обратную сторону
+        # прошлый вариант не позволел ей так делать
 
 
 def handle_keys(snake):
@@ -149,29 +148,28 @@ def handle_keys(snake):
 def main():
     """Основная функция игры."""
     pygame.init()
+    global positions
+    positions = []
 
-    snake = Snake((GRID_WIDTH // 2, GRID_HEIGHT // 2), GREEN)
-    apple = Apple((randint(0, GRID_WIDTH - 2),
-                   randint(0, GRID_HEIGHT - 2)), RED)
+    snake = Snake()
+    apple = Apple(RED)
 
     while True:
         handle_keys(snake)
 
         if snake.get_head_position() == apple.position:
             apple.randomize_position()
-            # теперь яблоки не могут появиться в змее, костыльно но работает
-            while apple.position in snake.positions:
-                apple.randomize_position()
             snake.move(grow=True)
         else:
             snake.move()
 
         if snake.get_head_position() in snake.positions[1:]:
+            apple.randomize_position()
             snake.reset()
 
         screen.fill(BOARD_BACKGROUND_COLOR)
-        snake.draw(screen, GRID_SIZE)
-        apple.draw(screen, GRID_SIZE)
+        snake.draw(screen)
+        apple.draw(screen)
         pygame.display.update()
         clock.tick(SPEED)
 
