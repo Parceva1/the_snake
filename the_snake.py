@@ -53,16 +53,14 @@ class Apple(GameObject):
         Инициализация нового яблока.
         С параметрами родительского класса GameObject.
         """
-        self.position = ZERO_POS
-        self.positions = []
         super().__init__(body_color)
-        self.randomize_position()
+        self.position = randint(0, GRID_WIDTH - 1), randint(0, GRID_HEIGHT - 1)
 
-    def randomize_position(self):
+    def randomize_position(self, occupied_positions):
         """Случайное изменение позиции яблока на игровом поле."""
         self.position = (randint(0, GRID_WIDTH - 1),
                          randint(0, GRID_HEIGHT - 1))
-        while self.position in self.positions:
+        while self.position in occupied_positions:
             self.position = (randint(0, GRID_WIDTH - 1),
                              randint(0, GRID_HEIGHT - 1))
 
@@ -92,24 +90,9 @@ class Snake(GameObject):
 
     def move(self, grow=False):
         """Движение змеи на игровом поле и направление движения."""
-        global positions
         head_x, head_y = self.get_head_position()
         new_head = ((head_x + self.direction[0]) % GRID_WIDTH,
                     (head_y + self.direction[1]) % GRID_HEIGHT)
-
-        # Рассчитываем новую позицию головы змеи здесь
-        head_x, head_y = new_head
-
-        if head_x < 0:
-            head_x = GRID_WIDTH - 1
-        elif head_x >= GRID_WIDTH:
-            head_x = 0
-        if head_y < 0:
-            head_y = GRID_HEIGHT - 1
-        elif head_y >= GRID_HEIGHT:
-            head_y = 0
-
-        new_head = (head_x, head_y)
 
         self.positions.insert(0, new_head)
 
@@ -138,37 +121,35 @@ def handle_keys(snake):
         if event.type == pygame.QUIT:
             pygame.quit()
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
+            if event.key == pygame.K_UP and snake.direction != DOWN:
                 snake.update_direction(UP)
-            elif event.key == pygame.K_DOWN:
+            elif event.key == pygame.K_DOWN and snake.direction != UP:
                 snake.update_direction(DOWN)
-            elif event.key == pygame.K_LEFT:
+            elif event.key == pygame.K_LEFT and snake.direction != RIGHT:
                 snake.update_direction(LEFT)
-            elif event.key == pygame.K_RIGHT:
+            elif event.key == pygame.K_RIGHT and snake.direction != LEFT:
                 snake.update_direction(RIGHT)
 
 
 def main():
     """Основная функция игры."""
     pygame.init()
-    global positions
-    positions = []
 
     snake = Snake()
     apple = Apple(RED)
 
     while True:
+        occupied_positions = snake.positions
         handle_keys(snake)
 
         if snake.get_head_position() == apple.position:
-            apple.randomize_position()
-            # теперь яблоки не могут появиться в змее, костыльно но работает
+            apple.randomize_position(occupied_positions)
             snake.move(grow=True)
         else:
             snake.move()
 
         if snake.get_head_position() in snake.positions[1:]:
-            apple.randomize_position()
+            apple.randomize_position(occupied_positions)
             snake.reset()
 
         screen.fill(BOARD_BACKGROUND_COLOR)
