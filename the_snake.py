@@ -54,15 +54,15 @@ class Apple(GameObject):
         С параметрами родительского класса GameObject.
         """
         self.position = ZERO_POS
+        self.positions = []
         super().__init__(body_color)
         self.randomize_position()
 
     def randomize_position(self):
         """Случайное изменение позиции яблока на игровом поле."""
-        global positions
         self.position = (randint(0, GRID_WIDTH - 1),
                          randint(0, GRID_HEIGHT - 1))
-        while self.position in positions:
+        while self.position in self.positions:
             self.position = (randint(0, GRID_WIDTH - 1),
                              randint(0, GRID_HEIGHT - 1))
 
