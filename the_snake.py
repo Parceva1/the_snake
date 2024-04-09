@@ -48,13 +48,13 @@ class GameObject:
 class Apple(GameObject):
     """Класс для яблока на игровом поле."""
 
-    def __init__(self, body_color=RED):
+    def __init__(self, body_color=RED, snake_positions=None):
         """
         Инициализация нового яблока.
-        С параметрами родительского класса GameObject.
+        Принимает параметры родительского класса GameObject и позиции змейки.
         """
         super().__init__(body_color)
-        self.position = randint(0, GRID_WIDTH - 1), randint(0, GRID_HEIGHT - 1)
+        self.randomize_position(snake_positions)
 
     def randomize_position(self, occupied_positions):
         """Случайное изменение позиции яблока на игровом поле."""
@@ -136,21 +136,20 @@ def main():
     pygame.init()
 
     snake = Snake()
-    apple = Apple(RED)
+    apple = Apple(RED, snake.positions)
 
     while True:
-        occupied_positions = snake.positions
         handle_keys(snake)
 
         if snake.get_head_position() == apple.position:
-            apple.randomize_position(occupied_positions)
+            apple.randomize_position(snake.positions)
             snake.move(grow=True)
         else:
             snake.move()
 
         if snake.get_head_position() in snake.positions[1:]:
-            apple.randomize_position(occupied_positions)
             snake.reset()
+            apple.randomize_position(snake.positions)
 
         screen.fill(BOARD_BACKGROUND_COLOR)
         snake.draw(screen)
