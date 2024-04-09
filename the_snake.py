@@ -48,7 +48,7 @@ class GameObject:
 class Apple(GameObject):
     """Класс для яблока на игровом поле."""
 
-    def __init__(self, body_color=RED, snake_positions=None):
+    def __init__(self, body_color=RED, snake_positions=ZERO_POS):
         """
         Инициализация нового яблока.
         Принимает параметры родительского класса GameObject и позиции змейки.
